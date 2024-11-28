@@ -59,7 +59,7 @@ jobs:
           echo "Adding $first_name $last_name to group: $group_name"
           echo "Firstname: $first_name"
           # Add the new member to the appropriate group
-          sed -i "/$GROUP_NAME/a\  - $FIRST_NAME $LAST_NAME" engineering.yml
+          sed -i "/$group_name:/,/member:/s/  - $FIRST_NAME $LAST_NAME" engineering.yml
           # Check the YAML file after the update
           cat engineering.yml
 
