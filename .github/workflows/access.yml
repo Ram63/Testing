@@ -56,7 +56,7 @@ jobs:
       - name: Update members in YAML if group found
         if: env.group_found == 'true'
         run: |
-          echo "Adding $FIRST_NAME $LAST_NAME to group: $GROUP_NAME"
+          echo "Adding $env.first_name $env.last_name to group: $env.group_found"
           # Add the new member to the appropriate group
           sed -i "/group: $GROUP_NAME/a\  - $FIRST_NAME $LAST_NAME" engineering.yml
           # Check the YAML file after the update
