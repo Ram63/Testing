@@ -60,16 +60,16 @@ jobs:
           # Check the YAML file after the update
           cat engineering.yml
 
-      - name: Commit and push changes
-        run: |
-          git add engineering.yml
-          git commit -m "Add member $FIRST_NAME $LAST_NAME to group $GROUP_NAME"
-          git push origin HEAD:feature-branch
+      # - name: Commit and push changes
+      #   run: |
+      #     git add engineering.yml
+      #     git commit -m "Add member $FIRST_NAME $LAST_NAME to group $GROUP_NAME"
+      #     git push origin HEAD:feature-branch
           
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          title: 'Add member $FIRST_NAME $LAST_NAME to group $GROUP_NAME'
-          body: 'Adding a new member to the group.'
-          base: main
-          head: feature-branch
+      # - name: Create Pull Request
+      #   uses: peter-evans/create-pull-request@v3
+      #   with:
+      #     title: 'Add member $FIRST_NAME $LAST_NAME to group $GROUP_NAME'
+      #     body: 'Adding a new member to the group.'
+      #     base: main
+      #     head: feature-branch
