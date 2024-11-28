@@ -1,0 +1,75 @@
+name: Update Members in Group and Create PR
+on:
+  workflow_dispatch:
+    inputs:
+      first_name:
+        description: 'First Name'
+        required: true
+        type: string
+      last_name:
+        description: 'Last Name'
+        required: true
+        type: string
+      group_name:
+        description: 'Group Name'
+        required: true
+        type: string
+jobs:
+  update_yaml_and_create_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+          
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          
+      - name: Load current members from YAML
+        id: load_yaml
+        run: |
+          # Load the YAML file to find the group and update the members
+          pwd
+          GROUP_NAME="${{ github.event.inputs.group_name }}"
+          FIRST_NAME="${{ github.event.inputs.first_name }}"
+          LAST_NAME="${{ github.event.inputs.last_name }}"
+          # Read the YAML file content
+          echo "Reading the YAML file..."
+          YAML_FILE="engineering.yml"
+          # Check if the group exists
+          if grep -q "group: $GROUP_NAME" "$YAML_FILE"; then
+            echo "Group found: $GROUP_NAME"
+            GROUP_FOUND=true
+          else
+            echo "Group not found: $GROUP_NAME"
+            GROUP_FOUND=false
+          fi
+          # Store variables to be used in subsequent steps
+          echo "group_found=$GROUP_FOUND" >> $GITHUB_ENV
+          echo "group_name=$GROUP_NAME" >> $GITHUB_ENV
+          echo "first_name=$FIRST_NAME" >> $GITHUB_ENV
+          echo "last_name=$LAST_NAME" >> $GITHUB_ENV
+          
+      - name: Update members in YAML if group found
+        if: env.group_found == 'true'
+        run: |
+          echo "Adding $FIRST_NAME $LAST_NAME to group: $GROUP_NAME"
+          # Add the new member to the appropriate group
+          sed -i "/group: $GROUP_NAME/a\  - $FIRST_NAME $LAST_NAME" engineering.yml
+          # Check the YAML file after the update
+          cat engineering.yml
+
+      - name: Commit and push changes
+        run: |
+          git add engineering.yml
+          git commit -m "Add member $FIRST_NAME $LAST_NAME to group $GROUP_NAME"
+          git push origin HEAD:feature-branch
+          
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: 'Add member $FIRST_NAME $LAST_NAME to group $GROUP_NAME'
+          body: 'Adding a new member to the group.'
+          base: main
+          head: feature-branch
