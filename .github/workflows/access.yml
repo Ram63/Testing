@@ -31,11 +31,13 @@ jobs:
         run: |
           # Load the YAML file to find the group and update the members
           pwd
+          cd /home/runner/work/Testing/Testing
           GROUP_NAME="${{ github.event.inputs.group_name }}"
           FIRST_NAME="${{ github.event.inputs.first_name }}"
           LAST_NAME="${{ github.event.inputs.last_name }}"
           # Read the YAML file content
           echo "Reading the YAML file..."
+          cat engineering.yml
           YAML_FILE="engineering.yml"
           # Check if the group exists
           if grep -q "group: $GROUP_NAME" "$YAML_FILE"; then
