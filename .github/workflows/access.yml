@@ -40,7 +40,7 @@ jobs:
           cat engineering.yml
           YAML_FILE="engineering.yml"
           # Check if the group exists
-          if grep -q "group: $GROUP_NAME" "$YAML_FILE"; then
+          if grep -q "$GROUP_NAME" "$YAML_FILE"; then
             echo "Group found: $GROUP_NAME"
             GROUP_FOUND=true
           else
