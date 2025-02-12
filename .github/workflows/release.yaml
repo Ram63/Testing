@@ -1,0 +1,45 @@
+name: prod-deliver
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:   # permissions required by ep-actions/kubernetes-login and vault
+      id-token: write
+      contents: read
+    outputs:
+      tag: ${{ steps.get-metadata.outputs.tag }}
+    environment: "prod"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # Disabling shallow clone is recommended for improving relevancy of reporting.
+
+      - name: get metadata
+        id: get-metadata
+        uses: ./.github/actions/get-pr-metadata
+
+      # - name: build push docker
+      #   id: build-push-docker
+      #   uses: ./.github/actions/build-push-docker
+      #   with:
+      #     dockerfile: ${{ steps.get-metadata.outputs.ups-dockerfile }}
+      #     image-tag: ${{ steps.get-metadata.outputs.tag }}
+      #     build-date-label: ${{ steps.get-metadata.outputs.build-date }}
+      #     git-branch-label: ${{ steps.get-metadata.outputs.branch }}
+      #     git-tag-label: ${{ steps.get-metadata.outputs.tag }}
+      #     git-hash-label: ${{ steps.get-metadata.outputs.sha-short }}
+      #     service-name: ${{ vars.SERVICE_NAME }}
+      #     artifactory-hostname: ${{ secrets.ARTIFACTORY_HOSTNAME }}
+      #     artifactory-username: ${{ secrets.ARTIFACTORY_GITHUB_ACTIONS_USERNAME }}
+      #     artifactory-password: ${{ secrets.ARTIFACTORY_GITHUB_ACTIONS_PASSWORD }}
+      #     app-id: ${{ secrets.PRIVATE_REPO_APP_ID }}
+      #     private-key: ${{ secrets.PRIVATE_REPO_APP_PEM }}
